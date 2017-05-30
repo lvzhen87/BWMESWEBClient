@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+		
+	<import resource="classpath:MES-EJB.xml"/>
+		
+	<!-- 隐式地向 Spring 容器注册 -->
+	<context:annotation-config />
+    
+    <!-- Spring Bean -->
+	<context:component-scan base-package="com.mes.webclient.*" />
+	<context:component-scan base-package="cn.ac.catarc.qj.*" /> 
+	
+	<!-- 通过注解，把一个URL映射到Controller类的  方法  上 -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<util:list id="beanList">
+				<ref bean="mappingJacksonHttpMessageConverter" />
+			</util:list>
+		</property>
+	</bean>
+
+	<!-- 通过注解，把一个URL映射到Controller类上  -->
+	<bean id="handlerMapping"
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="order" value="0" />
+	</bean>
+	
+	<!-- json配置 -->
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+	
+    <bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8"></property>
+	</bean>	
+    
+    <!-- 返回页面的前缀、后缀 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		p:prefix="/WEB-INF/view/" p:suffix=".jsp" />
+
+
+</beans>
